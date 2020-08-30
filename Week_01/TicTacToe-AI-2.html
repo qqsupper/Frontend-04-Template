@@ -27,9 +27,9 @@
  <script>
     // 棋盘
     let pattern=[
-      [0,0,2],
-      [0,1,0],
-      [0,0,0]
+       0,0,0,
+       0,0,0,
+       0,0,0
     ]
 
     let color=1
@@ -45,26 +45,40 @@
            let cell=document.createElement('div')
            cell.classList.add('cell')
            cell.innerText=
-                  pattern[i][j]==2?'❌':
-                  pattern[i][j]==1?'⭕️':'';
-          cell.addEventListener('click',()=>move(j,i))
+                  pattern[i*3+j]==2?'❌':   
+                  pattern[i*3+j]==1?'⭕️':'';
+          cell.addEventListener('click',()=>userMove(j,i))
            board.appendChild(cell)
         }
         board.appendChild(document.createElement('br'))
       }
     }
 
-    function move(x,y){
+
+
+    function userMove(x,y){
       //改变pattern数组里面的值
-      pattern[y][x]=color
+      pattern[y*3+x]=color  
       if(check(pattern,color)){
         alert(color==2?'❌ is winner!':'⭕️ is winner!')
       }
       color=3-color
+      console.log(bestChoice(pattern,color))
       show()
-      if(willWin(pattern,color)){
-         console.log(color==2?"❌ will win!":"⭕️ will win!")
-      }
+      computerMove()
+    }
+
+    //人工智能走位
+    function computerMove(){
+        let choice=bestChoice(pattern,color)
+        if(choice.point){
+          pattern[choice.point[1]*3+choice.point[0]]=color
+        }
+        if(check(pattern,color)){
+            alert(color==2?'❌ is winner!':'⭕️ is winner!')
+        }
+        color=3-color
+        show()
     }
 
     function check(pattern,color){
@@ -72,7 +86,7 @@
        for(let i=0;i<3;i++){
           let win=true
           for(let j=0;j<3;j++){
-            if(pattern[i][j]!=color){
+            if(pattern[i*3+j]!=color){
                win=false
             }
           }
@@ -86,7 +100,7 @@
        for(let i=0;i<3;i++){
           let win=true
           for(let j=0;j<3;j++){
-            if(pattern[j][i]!=color){
+            if(pattern[j*3+i]!=color){
                win=false
             }
           }
@@ -98,7 +112,7 @@
          //撇向判断
          let win=true
          for(let j=0;j<3;j++){
-           if(pattern[j][j]!=color){
+           if(pattern[j*3+j]!=color){
              win=false
            }
          }
@@ -110,7 +124,7 @@
          //捺向判断
          let win=true
          for(let j=0;j<3;j++){
-           if(pattern[j][2-j]!=color){
+           if(pattern[j*3+2-j]!=color){
              win=false
            }
          }
@@ -126,7 +140,8 @@
 
     // 克隆函数
     function clone(pattern){
-      return JSON.parse(JSON.stringify(pattern))
+      return Object.create(pattern)
+      // return JSON.parse(JSON.stringify(pattern))
     }
 
     //预测是否赢
@@ -134,13 +149,13 @@
       // console.log(color)
         for(let i=0;i<3;i++){
           for(let j=0;j<3;j++){
-            if(pattern[i][j]){
+            if(pattern[i*3+j]){
               continue
             }
 
             //克隆棋盘，帮棋盘每一个空的位置下当前color棋子
             let tmp=clone(pattern)
-            tmp[i][j]=color
+            tmp[i*3+j]=color
             if(check(tmp,color)){
               return [j,i]
             }
@@ -150,35 +165,41 @@
         return null
     }
 
+
+
+
     //下棋最好的选择
     function bestChoice(pattern,color){
 
-      let p
-      if(p=willWin(pattern,color)){
+      let point=willWin(pattern,color)
+      if(point){
         return{
-          point:p,
+          point:point,
           result:1
         }
       }
 
-      let result=-2 //初始最差的结果
-      let point=null
-      for(let i=0;i<3;i++){
+      let result=-1 //初始最差的结果
+      outer:for(let i=0;i<3;i++){  //用了js label方法
         for(let j=0;j<3;j++){
-            if(pattern[i][j]){
+            if(pattern[i*3+j]){
               //判断有子的点就跳过
               continue
             }
             let tmp=clone(pattern)
-            tmp[i][j]=color
+            tmp[i*3+j]=color
         
             let r=bestChoice(tmp,3-color).result //对方最好的策略
 
             if(-r>result){
               //对方的赢即我们输，是否找到对方最差的一个点，我们能超过，我们最差的结果都能大于对方最好的结果
-              console.log('r: ',-r,'result:',result)
+              // console.log('r: ',-r,'result:',result)
               result=-r //别人赢就是我们输，每次修改result结果 ,对方最差的点 
               point=[j,i]
+            }
+
+            if(result==1){
+              break outer
             }
         }
       }
@@ -190,9 +211,8 @@
 
 
     show(pattern)
-    console.log(bestChoice(pattern,color))
 
-
+ 
 
  </script>
  
