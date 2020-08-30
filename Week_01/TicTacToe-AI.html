@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Document</title>
+ <style>
+     .cell{
+      width: 100px;
+      height: 100px;
+      background:green;
+      display: inline-block;
+      border:1px solid white;
+      vertical-align: middle;
+      line-height: 100px;
+      font-size:50px;
+      text-align: center;
+
+     }
+ </style>
+</head>
+<body>
+
+ <div id='board'></div>
+
+
+ <script>
+    // 棋盘
+    let pattern=[
+      [0,0,2],
+      [0,1,0],
+      [0,0,0]
+    ]
+
+    let color=1
+
+
+    function show(){
+      let board=document.getElementById('board')
+
+      board.innerHTML=''
+
+      for(let i=0;i<3;i++){
+        for(let j=0;j<3;j++){
+           let cell=document.createElement('div')
+           cell.classList.add('cell')
+           cell.innerText=
+                  pattern[i][j]==2?'❌':
+                  pattern[i][j]==1?'⭕️':'';
+          cell.addEventListener('click',()=>move(j,i))
+           board.appendChild(cell)
+        }
+        board.appendChild(document.createElement('br'))
+      }
+    }
+
+    function move(x,y){
+      //改变pattern数组里面的值
+      pattern[y][x]=color
+      if(check(pattern,color)){
+        alert(color==2?'❌ is winner!':'⭕️ is winner!')
+      }
+      color=3-color
+      show()
+      if(willWin(pattern,color)){
+         console.log(color==2?"❌ will win!":"⭕️ will win!")
+      }
+    }
+
+    function check(pattern,color){
+      //横向判断
+       for(let i=0;i<3;i++){
+          let win=true
+          for(let j=0;j<3;j++){
+            if(pattern[i][j]!=color){
+               win=false
+            }
+          }
+          if(win){
+            return true
+          } 
+       }
+
+
+       //列向判断
+       for(let i=0;i<3;i++){
+          let win=true
+          for(let j=0;j<3;j++){
+            if(pattern[j][i]!=color){
+               win=false
+            }
+          }
+          if(win){
+            return true
+          } 
+       }
+       {
+         //撇向判断
+         let win=true
+         for(let j=0;j<3;j++){
+           if(pattern[j][j]!=color){
+             win=false
+           }
+         }
+         if(win){
+           return true
+         }
+       }
+       {
+         //捺向判断
+         let win=true
+         for(let j=0;j<3;j++){
+           if(pattern[j][2-j]!=color){
+             win=false
+           }
+         }
+         if(win){
+           return true
+         }
+       }
+
+       return false
+
+    }
+
+
+    // 克隆函数
+    function clone(pattern){
+      return JSON.parse(JSON.stringify(pattern))
+    }
+
+    //预测是否赢
+    function willWin(pattern,color){
+      // console.log(color)
+        for(let i=0;i<3;i++){
+          for(let j=0;j<3;j++){
+            if(pattern[i][j]){
+              continue
+            }
+
+            //克隆棋盘，帮棋盘每一个空的位置下当前color棋子
+            let tmp=clone(pattern)
+            tmp[i][j]=color
+            if(check(tmp,color)){
+              return [j,i]
+            }
+
+          }
+        }
+        return null
+    }
+
+    //下棋最好的选择
+    function bestChoice(pattern,color){
+
+      let p
+      if(p=willWin(pattern,color)){
+        return{
+          point:p,
+          result:1
+        }
+      }
+
+      let result=-2 //初始最差的结果
+      let point=null
+      for(let i=0;i<3;i++){
+        for(let j=0;j<3;j++){
+            if(pattern[i][j]){
+              //判断有子的点就跳过
+              continue
+            }
+            let tmp=clone(pattern)
+            tmp[i][j]=color
+        
+            let r=bestChoice(tmp,3-color).result //对方最好的策略
+
+            if(-r>result){
+              //对方的赢即我们输，是否找到对方最差的一个点，我们能超过，我们最差的结果都能大于对方最好的结果
+              console.log('r: ',-r,'result:',result)
+              result=-r //别人赢就是我们输，每次修改result结果 ,对方最差的点 
+              point=[j,i]
+            // }
+        }
+      }
+      return{
+        point:point,
+        result:point?result:0
+      }
+    }
+
+    show(pattern)
+    console.log(bestChoice(pattern,color))
+
+
+
+ </script>
+ 
+</body>
+</html>

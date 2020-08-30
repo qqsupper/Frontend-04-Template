@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Document</title>
+</head>
+<body>
+ 
+
+ <script>
+
+ //  async function redGreenLight(){
+
+ //   while(true){
+ 
+ //       await timeout('green',10000)
+
+ //       await timeout('yellow',2000)
+
+ //       await timeout('red',5000)
+ //   }
+
+ //  }
+
+
+ //  function timeout(value,ms) {
+ //  return new Promise((resolve) => {
+ //  setTimeout(function(){
+ //    resolve()
+ //    console.log(value)
+ //  }, ms);
+ //  });
+ //  }
+
+ // redGreenLight()
+
+ 
+ // 设置 红绿灯  单单setTimeout不会同步执行,依然是执行完后把setTimeout放进队列里面，如果是promise需要把promise执行完
+//  async function redGreenLight(){
+//     await setTimeout(function(){
+//       console.log(10000)
+//     },10000)
+
+//     console.log(1)
+
+//     await setTimeout(function(){
+//     console.log(5000)
+//     },5000)
+
+//     console.log(2)
+
+//     await setTimeout(function(){
+//     console.log(2000)
+//     },2000)
+
+//     console.log(4)
+//  }
+
+
+// redGreenLight()
+
+
+
+
+//下面方式一次把所有10次打印完,错误
+// let a=10
+
+//  while(a>0){
+//   a--;
+//   console.log(a);
+//   setTimeout(function(){light('green')
+//     setTimeout(function(){light('yellow')
+//      setTimeout(function(){light('red')},5000)
+//     },2000)
+//   },10000)
+//  }
+
+
+//  function light(value){
+//   console.log(value)
+//  }
+
+
+//优化自调
+
+
+// function printLight(){
+//  light('red')
+//  setTimeout(function(){light('green')
+//  setTimeout(function(){light('yellow')
+//  setTimeout(function(){
+//   printLight()
+//  },5000)
+//  },2000)
+//  },10000)
+// }
+
+
+// function light(value){
+// console.log(value)
+// }
+
+
+// printLight()
+
+
+
+//promise链式
+function sleep(ms){
+  return new Promise((resolve)=>{
+
+    setTimeout(function(){
+        resolve()
+    },ms)
+  })
+}
+
+function printLight(){
+   light('red')
+   sleep(10000).then(()=>{
+         light('green')
+         return sleep(2000)
+   }).then(()=>{
+     light('yellow')
+     return sleep(5000)
+   }).then(()=>{
+     printLight()
+   })
+
+}
+
+printLight()
+
+
+
+function light(value){
+console.log(value)
+}
+ </script>
+</body>
+</html>
