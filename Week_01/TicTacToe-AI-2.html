@@ -58,7 +58,7 @@
 
     function userMove(x,y){
       //改变pattern数组里面的值
-      pattern[y*3+x]=color  
+      pattern[y*3+x]=color   //x轴是3的余数,y轴是3的倍数
       if(check(pattern,color)){
         alert(color==2?'❌ is winner!':'⭕️ is winner!')
       }
