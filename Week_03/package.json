@@ -1,0 +1,14 @@
+{
+  "name": "week_03",
+  "version": "1.0.0",
+  "description": "学习笔记",
+  "main": "kmp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_ENV=production PORT=8080 babel-node ./bin/www",
+    "dev": "nodemon --inspect --exec babel-node --presets env ./bin/www",
+    "debug": "node --inspect-brk=5858 kmp.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

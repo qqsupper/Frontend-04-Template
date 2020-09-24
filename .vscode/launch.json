@@ -1,0 +1,31 @@
+//  {"version": "0.2.1",
+//   "configurations": [
+//     {
+//       "name": "Attach",
+//       "port": 9229,
+//       "request": "attach",
+//       "skipFiles": [
+//         "<node_internals>/**"
+//       ],
+//       "type": "pwa-node"
+//     },
+    
+//     {
+//       "type": "node",
+//       "request": "launch",
+//       "name": "debug js",
+//       "skipFiles": [
+//             "<node_internals>/**"
+//           ],
+//       "cwd": "${workspaceFolder}/Week_03",
+//       // "console": "integratedTerminal",
+//       // "program": "${workspaceRoot}/Week_03/kmp.js",
+//       "runtimeExecutable": "npm",
+//       "runtimeArgs": [
+//                 "run-script",
+//                 // "debug"
+//             ],
+//        "port":  5858
+//     },
+//    ]
+//   }

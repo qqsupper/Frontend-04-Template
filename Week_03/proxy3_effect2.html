@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Document</title>
+</head>
+<body>
+ 
+
+ <script>
+  let obj={
+    a:{c:2},
+    b:2
+  };
+  let callbacks=new Map();//调用了哪些函数
+  let usedReactivties=[];//调用了哪些变量
+
+
+  function effect(callback){
+        usedReactivties=[];
+        //实行监控对象的方法
+        callback();
+        console.log(usedReactivties);
+
+        for(let reactivity of usedReactivties){
+
+            //检查第一层是否有这个对象
+            if(!callbacks.has(reactivity[0])){
+                callbacks.set(reactivity[0],new Map())
+            }
+            //检查第一层是否有这个对象属性
+            if(!callbacks.get(reactivity[0]).has(reactivity[1])){
+                callbacks.get(reactivity[0]).set(reactivity[1],[])
+            }
+            // 在对象属性上添加回调方法
+            callbacks.get(reactivity[0]).get(reactivity[1]).push(callback);
+        }
+   }
+
+
+  function reactive(object){
+    return new Proxy(object,{
+      
+       set(obj,pro,value){
+         obj[pro]=value;
+
+        if(callbacks.get(obj)){
+           if(callbacks.get(obj).get(pro)){
+              for(let callback of callbacks){
+                callback();
+              }
+           }
+        }
+        
+         return obj[pro]
+       },
+       get(obj,pro){
+          usedReactivties.push([obj,pro]);
+          return obj[pro];
+        },
+    })
+  }
+
+
+
+
+ 
+  let po=reactive(obj);
+
+  effect(()=>{
+    console.log(po.a.c);
+  });
+
+
+
+
+ 
+
+ </script>
+</body>
+</html>

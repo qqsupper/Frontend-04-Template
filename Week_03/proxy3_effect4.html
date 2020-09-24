@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Document</title>
+ <style>
+   #color{
+     width: 100px;
+     height: 100px;
+   }
+
+ </style>
+</head>
+<body>
+ 
+  <input id='r' type="range" min=0 max=255>
+  <input id='g' type="range" min=0 max=255>
+  <input id='b' type="range" min=0 max=255>
+
+  <div id='color'></div>
+ <script>
+ 
+  
+  let reactivties=new Map();//大表  缓存所有proxy
+  let callbacks=new Map();//调用了哪些函数
+  let usedReactivties=[];//调用了哪些变量
+
+
+
+
+  function effect(callback){
+        usedReactivties=[];
+        //实行监控对象的方法
+        callback();
+        console.log(usedReactivties);
+
+        for(let reactivity of usedReactivties){
+
+            //检查第一层是否有这个对象
+            if(!callbacks.has(reactivity[0])){
+                callbacks.set(reactivity[0],new Map())
+            }
+            //检查第一层是否有这个对象属性
+            if(!callbacks.get(reactivity[0]).has(reactivity[1])){
+                callbacks.get(reactivity[0]).set(reactivity[1],[])
+            }
+            // 在对象属性上添加回调方法
+            callbacks.get(reactivity[0]).get(reactivity[1]).push(callback);
+        }
+   }
+
+
+  function reactive(object){
+    if(reactivties.has(object)) return reactivties.get(object);
+
+    let proxy= new Proxy(object,{
+      
+       set(obj,pro,value){
+         obj[pro]=value;
+
+        if(callbacks.get(obj)){
+           if(callbacks.get(obj).get(pro)){
+              for(let callback of callbacks.get(obj).get(pro)){
+                callback();
+              }
+           }
+        }
+        
+         return obj[pro]
+       },
+       get(obj,pro){
+          usedReactivties.push([obj,pro]);
+          if(typeof obj[pro] ==="object"){
+              return reactive(obj[pro]) //因为涉及递归，最后返回的proxy和use effect的proxy不是同一个对象,所以需要用个大表reactivties保存
+          }
+          return obj[pro];
+        },
+    })
+
+    reactivties.set(object,proxy);
+
+    return proxy;
+  }
+
+
+  // 例子
+
+  let obj={
+      r:1,
+      g:1,
+      b:1
+    };
+
+ 
+  let po=reactive(obj);
+
+  effect(()=>{
+    document.getElementById('r').value=po.r;
+  });
+
+  effect(()=>{
+  document.getElementById('g').value=po.g;
+  });
+
+  effect(()=>{
+    document.getElementById('b').value=po.b;
+    });
+
+  effect(()=>{
+     document.getElementById('color').style.backgroundColor=`rgba(${po.r},${po.g},${po.b})`
+  })
+
+  //双向绑定
+
+
+  document.getElementById('r').addEventListener('input',event=>po.r=event.target.value);
+  document.getElementById('g').addEventListener('input',event=>po.g=event.target.value);
+  document.getElementById('b').addEventListener('input',event=>po.b=event.target.value);
+
+
+
+
+
+ 
+
+ </script>
+</body>
+</html>

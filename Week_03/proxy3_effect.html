@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Document</title>
+</head>
+<body>
+ 
+
+ <script>
+  let obj={a:1,b:2};
+  let callbacks=[];//回调函数数组
+
+
+
+   function effect(callback){
+        callbacks.push(callback)
+   }
+
+
+  function reactive(object){
+    return new Proxy(object,{
+       get(obj,pro){
+         return obj[pro];
+       },
+       set(obj,pro,value){
+         obj[pro]=value;
+         for(let callback of callbacks){
+           callback();
+         }
+         
+         return obj[pro]
+       }
+    })
+  }
+
+
+
+
+ 
+  let po=reactive(obj);
+
+  effect(()=>{
+    console.log(po.a);
+  });
+
+
+
+
+ 
+
+ </script>
+</body>
+</html>
