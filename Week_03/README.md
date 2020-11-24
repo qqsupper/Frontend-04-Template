@@ -9,3 +9,4 @@
 - 监听元素的mouse事件,当元素mousedown的时候里面用document监听mousemove和mouseup事件,不然元素的mousedown会产生断层
 - range.getBoundingClientRect();range不变，但是它获取的坐标会随页面变化的时候变化;
 - selectstart的默认事件是文本给选中
+- proxy的原理分析:是vue中每次set 变量时候可以自动触发effect里面的回调函数，起到响应式作用。而usedReactivties是变量收集依赖的过程，就是哪些回调函数依赖这个变量。

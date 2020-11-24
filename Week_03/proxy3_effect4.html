@@ -55,7 +55,13 @@
     if(reactivties.has(object)) return reactivties.get(object);
 
     let proxy= new Proxy(object,{
-      
+      get(obj,pro){
+        usedReactivties.push([obj,pro]);
+        if(typeof obj[pro] ==="object"){
+        return reactive(obj[pro]) //因为涉及递归，最后返回的proxy和use effect的proxy不是同一个对象,所以需要用个大表reactivties保存
+        }
+        return obj[pro];
+      },
        set(obj,pro,value){
          obj[pro]=value;
 
@@ -69,13 +75,7 @@
         
          return obj[pro]
        },
-       get(obj,pro){
-          usedReactivties.push([obj,pro]);
-          if(typeof obj[pro] ==="object"){
-              return reactive(obj[pro]) //因为涉及递归，最后返回的proxy和use effect的proxy不是同一个对象,所以需要用个大表reactivties保存
-          }
-          return obj[pro];
-        },
+       
     })
 
     reactivties.set(object,proxy);

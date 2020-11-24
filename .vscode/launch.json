@@ -1,31 +1,55 @@
-//  {"version": "0.2.1",
-//   "configurations": [
-//     {
-//       "name": "Attach",
-//       "port": 9229,
-//       "request": "attach",
-//       "skipFiles": [
-//         "<node_internals>/**"
-//       ],
-//       "type": "pwa-node"
-//     },
-    
-//     {
-//       "type": "node",
-//       "request": "launch",
-//       "name": "debug js",
-//       "skipFiles": [
-//             "<node_internals>/**"
-//           ],
-//       "cwd": "${workspaceFolder}/Week_03",
-//       // "console": "integratedTerminal",
-//       // "program": "${workspaceRoot}/Week_03/kmp.js",
-//       "runtimeExecutable": "npm",
-//       "runtimeArgs": [
-//                 "run-script",
-//                 // "debug"
-//             ],
-//        "port":  5858
-//     },
-//    ]
-//   }
+{
+ // 使用 IntelliSense 了解相关属性。 
+ // 悬停以查看现有属性的描述。
+ // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+ "version": "0.2.0",
+ "configurations": [
+
+
+  {
+   "type": "node",
+   "request": "attach",
+   "name": "debug",
+   // "address": "localhost",
+   "port":8088
+   // "program": "${workspaceFolder}/Week_06/http/client.js"
+  },
+
+   {
+            "type": "node",
+            "request": "launch",
+            "name": "启动程序",
+             "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${file}",
+            "runtimeExecutable": "/Users/huygo/.nvm/versions/node/v13.11.0/bin/node"
+
+    },
+      {
+            "type": "node",
+            "request": "launch",
+            "name": "debug demo",
+            "program": "${workspaceFolder}/Week_06/http/demo/bin/www"
+
+        },
+        {
+            "name": "Run hello.js",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/hello.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "sourceMaps": false,
+        }
+ ]
+}
