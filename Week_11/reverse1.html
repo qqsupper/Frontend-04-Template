@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <div id='a'>
+        <span>1</span>
+        <p>2</p>
+        <a >3</a>
+        <div>4</div>
+    </div>
+
+<script>
+    let element = document.getElementById('a');
+
+    function reverseChildren(elem){
+      let l = elem.childNodes.length; 
+      while( l-- > 0){
+        //因为elem是living collections，可以动态修改dom结构,不用开一个新的数组
+        elem.appendChild(elem.childNodes[l])
+      }
+
+    }
+
+    reverseChildren(element)
+</script>
+</body>
+</html>
